@@ -5,7 +5,7 @@
 **Model:** XGBoost  
 **Tech:** Python, Streamlit, scikit-learn, XGBoost  
 
-Predicts if a shipment will be **on time** or **delayed** using logistics data.
+**Description:** Predicts if a shipment will be **on time** or **delayed** using logistics data.
 
 ### Features
 - Real-time prediction
