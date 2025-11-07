@@ -1,3 +1,18 @@
+"""
+Title:  ShipmentSure Predicting On-Time Delivery Using Supplier Data
+Author: Thummala Thanus Thapasvi
+GitHub: https://github.com/thanusthapasvi/shipment_sure
+
+Model Artifacts:
+    - shipment_best_model.pkl
+    - scaler.joblib
+    - feature_order.pkl
+
+Dependencies:
+    streamlit, pandas, numpy, joblib, scikit-learn, xgboost
+
+"""
+
 import streamlit as st
 import pandas as pd
 import joblib
@@ -153,4 +168,5 @@ if st.button("Predict Delivery Status"):
         st.info(f"Confidence: {proba:.2%}")
     else:
         st.error(f"Shipment is likely to be **delayed.**")
+
         st.info(f"Confidence: {1 - proba:.2%}")
