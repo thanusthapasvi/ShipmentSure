@@ -1,9 +1,9 @@
 # Shipment Sure Delivery Prediction
 
-**Author:** Thummala Thanus Thapasvi 
-**Live App:** https://shipmentsure-thapasvi.streamlit.app/
+**Author:** Thummala Thanus Thapasvi  
+**Live App:** https://shipmentsure-thapasvi.streamlit.app/  
 **Model:** XGBoost  
-**Tech:** Python, Streamlit, scikit-learn, XGBoost
+**Tech:** Python, Streamlit, scikit-learn, XGBoost  
 
 Predicts if a shipment will be **on time** or **delayed** using logistics data.
 
