@@ -27,15 +27,22 @@ st.markdown("""
         box-sizing: border-box;
     }
     .stMain {
-        background: linear-gradient(135deg, #112222, #001111);
+        background-color: #112222;
+        background: linear-gradient(135deg, #112222 0%, #112222 45%, #113232AA 50%, #112222 55%, #112222 100%);
         padding: 20px;
+        background-size: 300% 300%;
+        animation: bgMove 3s linear infinite;
+    }
+    @keyframes bgMove {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 110% 50%; }
     }
     .stAppHeader {
         background: var(--acd);
         box-shadow: 0 0.5px white;
     }
     .st-emotion-cache-1anq8dj {
-        /* Start Button */
+        /* predict Button */
         background: black;
         border-radius: 999px;
         border: 2px solid var(--ac);
@@ -63,25 +70,71 @@ st.markdown("""
         box-shadow: 0 2px 6px black;
     }
     .stAlertContainer:hover {
-        transform: scale(1.01);
         box-shadow: 0 0 12px 2px var(--ac);
     }
-    .st-emotion-cache-ujm5ma, .stMainMenu, .st-b6, .st-emotion-cache-14zer8g, span {
-        /* Sidebar close button, main menu button, 
-            Text in inputs and Arrow down svg for dropdowns, - and + for numbers, header text */
+    .st-emotion-cache-ujm5ma, .stMainMenu, span {
+        /* Sidebar close button, main menu button, header text */
         color: var(--acb);
     }
-    .stProgress {
-        background: linear-gradient(to right, var(--acb) 0%, var(--acb) 90%, var(--acb2) 100%);
-    }
     .st-emotion-cache-11xx4re {
+        /* Slider thumb */
         background: var(--acb);
     }
     .st-emotion-cache-jigjfz {
+        /* Slider thumb number */
         color: var(--acb);
     }
+    div[data-baseweb="select"], div[data-testid="stNumberInputContainer"]  {
+        /* select box and number input */
+        background: #001a1a !important;
+        border: 2px solid var(--ac) !important;
+        border-radius: 10px !important;
+        transition: all 0.3s ease-in-out;
+    }
+    div[data-baseweb="select"]:hover, div[data-testid="stNumberInputContainer"]:hover {
+        border: 2px solid var(--acb) !important;
+        box-shadow: 0 0 8px 1px var(--ac);
+    }
+    div[data-baseweb="select"] > div, input[type="number"] {
+        /* text in select box and number input*/
+        color: var(--acb) !important;
+        font-weight: 500;
+    }
+    ul[data-testid="stSelectboxVirtualDropdown"]{
+        /* dropdown for select */
+        background: var(--acd) !important;
+        border: 1px solid var(--ac) !important;
+        border-radius: 10px !important;
+        animation: fadeSlide 0.5s ease;
+        color: var(--acb);
+    }
+    ul[data-testid="stSelectboxVirtualDropdown"]:hover {
+        border: 1px solid var(--acb) !important;
+        box-shadow: 0 0 8px 1px var(--acb);
+    }
+    ul[data-testid="stSelectboxVirtualDropdown"] > div > div > li {
+        /* list in dropdown */
+        color: var(--acb) !important;
+        padding: 6px 10px !important;
+        transition: all 0.2s ease-in-out;
+    }
+    ul[data-testid="stSelectboxVirtualDropdown"] > div > div > li:hover {
+        background: rgba(0,200,200,0.2) !important;
+    }
+    @keyframes fadeSlide {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
 </style>
 """, unsafe_allow_html=True)
+
 
 # Load Model, Scaler, and Feature Order
 model = joblib.load("shipment_best_model.pkl")
@@ -157,16 +210,34 @@ scale_cols = [
 ]
 input_scaled = input_data.copy()
 input_scaled[scale_cols] = scaler.transform(input_data[scale_cols])
-
-# Predict
+# Prediction
 if st.button("Predict Delivery Status"):
     pred = model.predict(input_scaled)[0]
     proba = model.predict_proba(input_scaled)[0][1]
-
     if pred == 1:
-        st.success(f"Shipment is likely to reach **on time!**")
-        st.info(f"Confidence: {proba:.2%}")
+        st.success("Shipment is likely to reach **on time!**")
+        confidence = proba
     else:
-        st.error(f"Shipment is likely to be **delayed.**")
+        st.error("Shipment is likely to be **delayed.**")
+        confidence = 1 - proba
 
-        st.info(f"Confidence: {1 - proba:.2%}")
+    if confidence > 0.7:
+        bar_color = "var(--acb)"
+    elif confidence > 0.5:
+        bar_color = "#FFDD33"
+    else:
+        bar_color = "#FF4444"
+
+    st.markdown(f"""
+    <style>
+    [data-testid="stProgress"] > div > div > div > div {{
+        background-color: {bar_color};
+        background: linear-gradient(to right, {bar_color} 0%, {bar_color} 90%, var(--acb2) 95%, var(--acb2) 100%);
+        transition: all 0.6s ease-in-out;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Show progress bar and confidence
+    st.markdown(f"### Confidence: **{confidence:.2%}**")
+    st.progress(float(confidence))
