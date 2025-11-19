@@ -28,7 +28,7 @@ st.markdown("""
     }
     .stMain {
         background-color: #112222;
-        background: linear-gradient(135deg, #112222 0%, #112222 45%, #113232AA 50%, #112222 55%, #112222 100%);
+        background: linear-gradient(135deg, #112222 0%, #112222 45%, #113333 50%, #112222 55%, #112222 100%);
         padding: 20px;
         background-size: 300% 300%;
         animation: bgMove 3s linear infinite;
@@ -241,3 +241,4 @@ if st.button("Predict Delivery Status"):
     # Show progress bar and confidence
     st.markdown(f"### Confidence: **{confidence:.2%}**")
     st.progress(float(confidence))
+
